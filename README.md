@@ -14,7 +14,7 @@ The objective is to build a neural network that can infer and recover missing va
 
 ## 🗂️ Project Structure
 
-- `Assessment.ipynb`: Contains all analysis, visualizations, model design, training loop, and final predictions.
+- `Weather-data-reconstruction-dl.ipynb`: Contains all analysis, visualizations, model design, training loop, and final predictions.
 - `test_set_nogaps.csv`: Output file with the reconstructed weather values for the test set.
 - `References.md`: A record of all external tools and sources used during the project.
 - `training_set/`: Folder containing input training data (`_nogaps.csv` and corrupted `.csv` files).
