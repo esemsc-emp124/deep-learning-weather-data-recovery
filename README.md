@@ -58,9 +58,37 @@ Each file includes daily records of:
    - Demonstrated ability to recover missing values accurately across multiple weather variables.  
    - Final outputs were stored with preserved shape and format, suitable for saving in `test_set_nogaps.csv`.
 
-## 🔬 Results
+## 📊 Results
 
-The trained model produced realistic reconstructions for missing weather values. Visual analysis confirmed consistency across features, and histograms showed that the imputed distributions closely aligned with the uncorrupted data.
+- Initially explored a **Feedforward Neural Network (FFN)** but found it insufficient due to lack of temporal modeling.  
+  → Switched to a **Recurrent Neural Network (RNN)** using LSTM cells to capture time dependencies between days.
+
+- **Normalization** was crucial:  
+  → Without normalization, the model produced high loss and poor predictions.  
+  → Applied `RobustScaler` to both training and test sets for improved convergence.
+
+- Constructed training sequences using `seq_len = 4` based on correlation analysis:  
+  → Correlation matrix indicated strongest relationships across 4-day windows.  
+  → Concatenated all decades for sequence construction, which occasionally spanned across decades.  
+  → This introduced minor edge inconsistencies, but was negligible due to short `seq_len`.
+
+- Discovered the importance of **padding**:  
+  → Without padding, model failed to reconstruct some rows at the beginning/end of sequences.  
+  → Applied padding before slicing sequences to maintain full temporal coverage.
+
+- **Hyperparameter tuning**:  
+  → Started with short training runs to observe loss curves.  
+  → Used a validation split to detect overfitting.  
+  → Overfitting was partially mitigated by increasing dropout to 0.6.  
+  → Final model settings:  
+    - Learning rate: `1e-4`  
+    - Weight decay: `1e-5`  
+    - Dropout: `0.6`
+
+- Despite some overfitting, the final model provided **consistent and coherent reconstructions** of missing weather data.  
+  → Predictions matched the trends and distributions of the clean sequences closely.  
+  → With more time, further tuning and architectural experiments (e.g., Transformer models or decade-specific training) could improve generalization.
+
 
 ## 📚 Skills & Tools
 
