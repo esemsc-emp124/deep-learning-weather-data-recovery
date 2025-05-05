@@ -35,21 +35,28 @@ Each file includes daily records of:
 
 ## ⚙️ Methodology
 
-1. **Exploratory Analysis**
-   - Visualized trends and distributions before/after corruption.
-   - Identified variable dependencies and patterns of missingness.
+1. **Exploratory Analysis**  
+   - Loaded three decades of weather data, both with and without missing values.  
+   - Plotted each variable over time and compared corrupted vs. uncorrupted versions to visualize the effect of missing data.  
+   - Generated histograms to compare distributions across corrupted and clean data.  
+   - Computed and visualized a correlation matrix across sequences of days to inform sequence length (ultimately choosing `seq_len = 4` for strong temporal correlation).
 
-2. **Data Preparation**
-   - Constructed paired datasets for supervised learning.
-   - Implemented PyTorch `DataLoader`s for training and inference.
+2. **Data Preparation**  
+   - Concatenated all decades into a single dataset and applied `RobustScaler` for normalization.  
+   - Padded the data at the start and end to allow sequence slicing without data loss due to boundaries.  
+   - Constructed a custom `Dataset` class to handle interpolation, masking of missing values (`mask == 1` for missing), and supervised pairing with clean labels.  
+   - Split the dataset into training and validation sets (90/10 split) and used PyTorch `DataLoader`s with batch size 64.
 
-3. **Model Design**
-   - Designed a temporal deep learning model using architectures such as LSTM, GRU, or Transformer variants.
-   - Optimized using mean squared error (MSE) loss between corrupted inputs and their clean counterparts.
+3. **Model Design**  
+   - Implemented an LSTM-based recurrent neural network (`WeatherRNN`) with two stacked LSTM layers and a dropout of 0.6.  
+   - The model receives sequences of length 4 and predicts the same length, masking known values to focus only on imputation.  
+   - Defined a custom masked MSE loss function to compute reconstruction error only where data was originally missing.  
+   - Trained using Adam optimizer with learning rate `1e-4`, weight decay `1e-5`, and mean squared error loss over 60 epochs.
 
-4. **Evaluation & Output**
-   - Reconstructed the test dataset and visualized results.
-   - Saved output in `test_set_nogaps.csv` maintaining original formatting.
+4. **Evaluation & Output**  
+   - Evaluated model predictions on a held-out test set, visualized reconstructed time series, and compared them to input corrupted sequences.  
+   - Demonstrated ability to recover missing values accurately across multiple weather variables.  
+   - Final outputs were stored with preserved shape and format, suitable for saving in `test_set_nogaps.csv`.
 
 ## 🔬 Results
 
